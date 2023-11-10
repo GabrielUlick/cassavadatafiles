@@ -37,7 +37,7 @@ export default function Home() {
         })
         .then((response) => {
           if (response.status !== 200) {
-            alert("Erro: " + response.data);
+            alert("Erro: " + response.data.message);
           } else {
             alert("Cliente Cadastrado");
           }
