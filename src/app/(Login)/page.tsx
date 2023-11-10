@@ -17,11 +17,22 @@ export default function Home() {
       alert("Falha no Login: Digite seu Email.");
     } else {
       const endpoint = "sessions/";
-      console.log(email);
+  
+      // Construa o objeto que deseja enviar no formato JSON
+      const requestData = {
+        email: email,
+      };
+  
+      console.log(requestData);
+  
       api
-        .post(endpoint, email, {
+        .post(endpoint, requestData, {
           validateStatus: (status) => {
             return status < 405;
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer',
           },
         })
         .then((response) => {
@@ -58,8 +69,8 @@ export default function Home() {
           onChange={(e) => setEmail(e.target.value)}
         />
         <Button
-          size={"sm"}
-          variant={"ghost"}
+          size="sm"
+          variant="link"
           className="bg-amber-950 h-10"
           onClick={handleSignIn}
         >
