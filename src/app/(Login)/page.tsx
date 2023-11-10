@@ -36,8 +36,8 @@ export default function Home() {
           },
         })
         .then((response) => {
-          if (response.status === 404) {
-            alert("Erro ao criar Cliente: " + response.data);
+          if (response.status !== 200) {
+            alert("Erro: " + response.data);
           } else {
             alert("Cliente Cadastrado");
           }
