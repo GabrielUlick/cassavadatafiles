@@ -16,7 +16,7 @@ export default function Home() {
     if (email === "") {
       alert("Falha no Login: Digite seu Email.");
     } else {
-      const endpoint = "sessions/";
+      const endpoint = "sessions";
   
       // Construa o objeto que deseja enviar no formato JSON
       const requestData = {
