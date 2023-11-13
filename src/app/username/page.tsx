@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import api from "@/services/api";
@@ -10,17 +10,16 @@ import { useState } from "react";
 import Link from "next/link";
 
 export default function Home() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
 
   function handleSignIn() {
-    if (email === "") {
-      alert("Falha no Login: Digite seu Email.");
+    if (username === "") {
+      alert("Falha no Login: Digite seu username.");
     } else {
-      const endpoint = "sessions";
+      const endpoint = "/users/name";
 
-      // Construa o objeto que deseja enviar no formato JSON
       const requestData = {
-        email: email,
+        username: username,
       };
 
       console.log(requestData);
@@ -39,7 +38,7 @@ export default function Home() {
           if (response.status !== 200) {
             alert(response.data.message);
           } else {
-            <Link href="/verification">
+            <Link href="/home">
             alert(response.data.message);
             </Link>
           }
@@ -51,35 +50,25 @@ export default function Home() {
   }
 
   return (
-    <div className="flex items-center justify-center bg-white h-[78vh] w-auto">
-      <Image
-        src={"/LogoCassava.png"}
-        alt={"Cassava DataFiles"}
-        height={0}
-        width={0}
-        sizes="100vw"
-        className="h-auto w-auto max-w-[25%] max-h-[50%] border-r-2"
-        style={{
-          objectFit: "contain",
-        }}
-      />
+    <div className="flex flex-col items-center justify-center bg-white h-[78vh] w-auto">
       <div className="flex flex-col gap-2">
+        <p className="pl-8">Username:</p>
         <div className="flex pl-5 gap-3">
           <Input
-            type="email"
-            placeholder="Email"
+            type="text"
+            placeholder="Set your Username"
             className="h-14 w-80 bg-slate-100 rounded-full"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
           />
-            <Button
-              variant="secondary"
-              className="bg-amber-950 h-14 w-13 rounded-full"
-              onClick={handleSignIn}
-            >
-              <ChevronRight className="text-slate-50" />
-            </Button>
+          <Button
+            variant="secondary"
+            className="bg-amber-950 h-14 w-13 rounded-full"
+            onClick={handleSignIn}
+          >
+            <ChevronRight className="text-slate-50" />
+          </Button>
         </div>
-        <p className="pl-6">Login or create a new account with your email</p>
+        <p className="pl-8">Create a username (not required)</p>
       </div>
     </div>
   );
