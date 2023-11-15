@@ -11,6 +11,7 @@ import Link from "next/link";
 
 export default function Home() {
   const [email, setEmail] = useState("");
+  const [done, setDone] = useState(false)
 
   function handleSignIn() {
     if (email === "") {
@@ -38,10 +39,10 @@ export default function Home() {
         .then((response) => {
           if (response.status !== 200) {
             alert(response.data.message);
+            setDone(true)
           } else {
-            <Link href="/verification">
             alert(response.data.message);
-            </Link>
+            setDone(true);
           }
         })
         .catch((error) => {
@@ -49,6 +50,11 @@ export default function Home() {
         });
     }
   }
+
+    // Adicionando a condição de redirecionamento
+    if (done) {
+      return <Link href="/verification"><a>Redirecting...</a></Link>;
+    }
 
   return (
     <div className="flex items-center justify-center bg-white h-[78vh] w-auto">
@@ -71,13 +77,13 @@ export default function Home() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setEmail(e.target.value)}
           />
-            <Button
-              variant="secondary"
-              className="bg-amber-950 h-14 w-13 rounded-full"
-              onClick={handleSignIn}
-            >
-              <ChevronRight className="text-slate-50" />
-            </Button>
+          <Button
+            variant="secondary"
+            className="bg-amber-950 h-14 w-13 rounded-full"
+            onClick={handleSignIn}
+          >
+            <ChevronRight className="text-slate-50" />
+          </Button>
         </div>
         <p className="pl-6">Login or create a new account with your email</p>
       </div>
