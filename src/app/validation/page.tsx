@@ -10,14 +10,14 @@ import { ChevronRight } from "lucide-react";
 export default function Validation() {
   const [code, setCode] = useState("");
   const [seconds, setSeconds] = useState(300);
-  const [userToken, setUserToken] = useState(null); // Adicionado estado local para o token
+  const [userToken, setUserToken] = useState("");
 
   const urlParams = new URLSearchParams(window.location.search);
   const uid = urlParams.get("uuid");
 
   function handleValidation() {
     if (code === "") {
-      alert("Falha no Login: Digite seu code.");
+      alert("Falha no Login: Digite seu código.");
     } else {
       const endpoint = "sessions/validations";
 
@@ -40,7 +40,7 @@ export default function Validation() {
             window.location.href = "/username";
           } else {
             const token = response.data.token;
-            alert(token)
+            alert(token);
             setUserToken(token);
             signIn('credentials', {
               token: token,
@@ -56,18 +56,32 @@ export default function Validation() {
   }
 
   useEffect(() => {
+    const storedToken = localStorage.getItem('userToken');
+  
+    if (storedToken !== null) {
+      setUserToken(storedToken);
+    }
+  
     const intervalId = setInterval(() => {
       setSeconds((prevSeconds) => {
         if (prevSeconds === 0) {
           clearInterval(intervalId);
-          // Implementar a lógica a ser executada quando o contador chegar a zero
+          setUserToken("");
         }
         return prevSeconds - 1;
       });
     }, 1000);
-
+  
     return () => clearInterval(intervalId);
   }, []);
+
+  useEffect(() => {
+    if (userToken) {
+      localStorage.setItem('userToken', userToken);
+    } else {
+      localStorage.removeItem('userToken');
+    }
+  }, [userToken]);
 
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
@@ -75,11 +89,11 @@ export default function Validation() {
   return (
     <div className="flex flex-col items-center justify-center bg-white h-[78vh] w-auto">
       <div className="flex flex-col gap-2">
-        <p className="pl-8">Verification Code:</p>
+        <p className="pl-8">Código de Verificação:</p>
         <div className="flex pl-5 gap-3">
           <Input
             type="text"
-            placeholder="verification code"
+            placeholder="Código de verificação"
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setCode(e.target.value)}
           />

@@ -1,53 +1,50 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import api from "@/services/api";
 import { ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 import Link from "next/link";
 
 export default function Username() {
   const [username, setUsername] = useState("");
-  const [userToken, setUserToken] = useState(""); // Adicione um estado local para o token
 
-  // Verifica se o token está disponível e, se sim, inclui-o nos headers da requisição
-  const headers = userToken ? { Authorization: `Bearer ${userToken}` } : {};
+  useEffect(() => {
+    const storedToken = localStorage.getItem('userToken');
+    if (storedToken) {
+      alert(`Token do Local Storage: ${storedToken}`);
+    }
+  }, []);
 
-  function handleAlterName() {
+  function handleSignIn() {
     if (username === "") {
       alert("Falha no Login: Digite seu username.");
     } else {
       const endpoint = "/users/name";
-      
+
       const requestData = {
         username: username,
       };
-  
+      const storedToken = localStorage.getItem('userToken');
+
       api
         .post(endpoint, requestData, {
-          validateStatus: (status) => status < 405,
+          validateStatus: (status) => {
+            return status < 405;
+          },
           headers: {
             "Content-Type": "application/json",
-            ...headers,
+            Authorization: storedToken ? `Bearer ${storedToken}` : "",
           },
         })
         .then((response) => {
           if (response.status !== 200) {
             alert(response.data.message);
           } else {
-            // Extraia o token da resposta
-            const token = response.data.token;
-            
-            // Atualize o estado local com o token
-            setUserToken(token);
-  
-            // Redirecione para a página desejada usando Link do Next.js
-            // Nota: Use o useRouter para redirecionar programaticamente no Next.js
-            // Certifique-se de importar useRouter no início do arquivo
-            // import { useRouter } from 'next/router';
-            // const router = useRouter();
-            // router.push("/home");
+            window.location.href = "/home";
           }
         })
         .catch((error) => {
@@ -70,7 +67,7 @@ export default function Username() {
           <Button
             variant="secondary"
             className="bg-amber-950 h-14 w-13 rounded-full"
-            onClick={handleAlterName}
+            onClick={handleSignIn}
           >
             <ChevronRight className="text-slate-50" />
           </Button>
