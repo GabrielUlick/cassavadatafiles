@@ -7,25 +7,25 @@ import api from "@/services/api";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import Link from "next/link";
+
 
 export default function Home() {
   const [email, setEmail] = useState("");
-  const [done, setDone] = useState(false)
+  const [done, setDone] = useState(false);
 
   function handleSignIn() {
     if (email === "") {
       alert("Falha no Login: Digite seu Email.");
     } else {
       const endpoint = "sessions";
-
+  
       // Construa o objeto que deseja enviar no formato JSON
       const requestData = {
         email: email,
       };
-
+  
       console.log(requestData);
-
+  
       api
         .post(endpoint, requestData, {
           validateStatus: (status) => {
@@ -39,10 +39,16 @@ export default function Home() {
         .then((response) => {
           if (response.status !== 200) {
             alert(response.data.message);
-            setDone(true)
+            window.location.href = "/validation";
           } else {
-            alert(response.data.message);
-            setDone(true);
+            // Obtenha o UUID da resposta
+            const uid = response.data.uid;
+  
+            // Faça algo com o UUID, como armazená-lo para uso posterior
+            console.log("UUID recebido:", uid);
+  
+            // Você pode passar o UUID para a próxima tela, por exemplo, adicionando-o à URL
+            window.location.href = "/validation?uuid=" + uid;
           }
         })
         .catch((error) => {
@@ -50,11 +56,7 @@ export default function Home() {
         });
     }
   }
-
-    // Adicionando a condição de redirecionamento
-    if (done) {
-      return <Link href="/verification"><a>Redirecting...</a></Link>;
-    }
+  
 
   return (
     <div className="flex items-center justify-center bg-white h-[78vh] w-auto">
@@ -77,6 +79,7 @@ export default function Home() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setEmail(e.target.value)}
           />
+
           <Button
             variant="secondary"
             className="bg-amber-950 h-14 w-13 rounded-full"

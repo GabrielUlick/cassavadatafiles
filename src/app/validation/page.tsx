@@ -1,5 +1,6 @@
 "use client";
 
+import { signIn } from 'next-auth/react';
 import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,22 +10,26 @@ import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 
-export default function Home() {
+export default function Validation() {
   const [code, setCode] = useState("");
   const [seconds, setSeconds] = useState(300);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const uid = urlParams.get("uuid");
 
   function handleSignIn() {
     if (code === "") {
       alert("Falha no Login: Digite seu code.");
     } else {
       const endpoint = "sessions/validations";
-
+  
       const requestData = {
         code: code,
+        uid: uid,
       };
-
+  
       console.log(requestData);
-
+  
       api
         .post(endpoint, requestData, {
           validateStatus: (status) => {
@@ -39,7 +44,14 @@ export default function Home() {
           if (response.status !== 200) {
             alert(response.data.message);
           } else {
-            <Link href="/username">alert(response.data.message);</Link>;
+            // Extraia o token da resposta
+            const token = response.data.token;
+  
+            // Use o NextAuth para autenticar o usuário e redirecionar para a página desejada
+            signIn('credentials', {
+              token: token,
+              callbackUrl: '/profile', // Redirecione para a página desejada
+            });
           }
         })
         .catch((error) => {
