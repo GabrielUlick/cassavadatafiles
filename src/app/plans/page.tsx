@@ -10,45 +10,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 export default function Plans() {
-    const [username, setUsername] = useState("");
-
-    function handleSignIn() {
-        if (username === "") {
-            alert("Falha no Login: Digite seu username.");
-        } else {
-            const endpoint = "/users/name";
-
-            const requestData = {
-                username: username,
-            };
-
-            console.log(requestData);
-
-            api
-                .post(endpoint, requestData, {
-                    validateStatus: (status) => {
-                        return status < 405;
-                    },
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: "Bearer",
-                    },
-                })
-                .then((response) => {
-                    if (response.status !== 200) {
-                        alert(response.data.message);
-                    } else {
-                        <Link href="/home">
-                            alert(response.data.message);
-                        </Link>
-                    }
-                })
-                .catch((error) => {
-                    console.error(error.message);
-                });
-        }
-    }
-
+   
     return (
         <>
             <div className="p-10">

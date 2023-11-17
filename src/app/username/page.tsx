@@ -1,46 +1,53 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import api from "@/services/api";
 import { ChevronRight } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
 import Link from "next/link";
 
 export default function Username() {
   const [username, setUsername] = useState("");
+  const [userToken, setUserToken] = useState(""); // Adicione um estado local para o token
 
-  function handleSignIn() {
+  // Verifica se o token está disponível e, se sim, inclui-o nos headers da requisição
+  const headers = userToken ? { Authorization: `Bearer ${userToken}` } : {};
+
+  function handleAlterName() {
     if (username === "") {
       alert("Falha no Login: Digite seu username.");
     } else {
       const endpoint = "/users/name";
-
+      
       const requestData = {
         username: username,
       };
-
-      console.log(requestData);
-
+  
       api
         .post(endpoint, requestData, {
-          validateStatus: (status) => {
-            return status < 405;
-          },
+          validateStatus: (status) => status < 405,
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer",
+            ...headers,
           },
         })
         .then((response) => {
           if (response.status !== 200) {
             alert(response.data.message);
           } else {
-            <Link href="/home">
-            alert(response.data.message);
-            </Link>
+            // Extraia o token da resposta
+            const token = response.data.token;
+            
+            // Atualize o estado local com o token
+            setUserToken(token);
+  
+            // Redirecione para a página desejada usando Link do Next.js
+            // Nota: Use o useRouter para redirecionar programaticamente no Next.js
+            // Certifique-se de importar useRouter no início do arquivo
+            // import { useRouter } from 'next/router';
+            // const router = useRouter();
+            // router.push("/home");
           }
         })
         .catch((error) => {
@@ -63,7 +70,7 @@ export default function Username() {
           <Button
             variant="secondary"
             className="bg-amber-950 h-14 w-13 rounded-full"
-            onClick={handleSignIn}
+            onClick={handleAlterName}
           >
             <ChevronRight className="text-slate-50" />
           </Button>

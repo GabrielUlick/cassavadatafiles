@@ -1,40 +1,34 @@
 "use client";
 
 import { signIn } from 'next-auth/react';
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import api from "@/services/api";
 import { ChevronRight } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
-import Link from "next/link";
 
 export default function Validation() {
   const [code, setCode] = useState("");
   const [seconds, setSeconds] = useState(300);
+  const [userToken, setUserToken] = useState(null); // Adicionado estado local para o token
 
   const urlParams = new URLSearchParams(window.location.search);
   const uid = urlParams.get("uuid");
 
-  function handleSignIn() {
+  function handleValidation() {
     if (code === "") {
       alert("Falha no Login: Digite seu code.");
     } else {
       const endpoint = "sessions/validations";
-  
+
       const requestData = {
         code: code,
         uid: uid,
       };
-  
-      console.log(requestData);
-  
+
       api
         .post(endpoint, requestData, {
-          validateStatus: (status) => {
-            return status < 405;
-          },
+          validateStatus: (status) => status < 405,
           headers: {
             "Content-Type": "application/json",
             Authorization: "Bearer",
@@ -43,15 +37,16 @@ export default function Validation() {
         .then((response) => {
           if (response.status !== 200) {
             alert(response.data.message);
+            window.location.href = "/username";
           } else {
-            // Extraia o token da resposta
             const token = response.data.token;
-  
-            // Use o NextAuth para autenticar o usuário e redirecionar para a página desejada
+            alert(token)
+            setUserToken(token);
             signIn('credentials', {
               token: token,
-              callbackUrl: '/profile', // Redirecione para a página desejada
+              callbackUrl: '/profile',
             });
+            window.location.href = "/username";
           }
         })
         .catch((error) => {
@@ -65,17 +60,15 @@ export default function Validation() {
       setSeconds((prevSeconds) => {
         if (prevSeconds === 0) {
           clearInterval(intervalId);
-          // Implemente a lógica a ser executada quando o contador chegar a zero
+          // Implementar a lógica a ser executada quando o contador chegar a zero
         }
         return prevSeconds - 1;
       });
     }, 1000);
 
-    // Limpe o intervalo quando o componente for desmontado
     return () => clearInterval(intervalId);
   }, []);
 
-  // Converte os segundos para minutos e segundos
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
 
@@ -93,7 +86,7 @@ export default function Validation() {
           <Button
             variant="secondary"
             className="bg-amber-950 h-14 w-13 rounded-full"
-            onClick={handleSignIn}
+            onClick={handleValidation}
           >
             <ChevronRight className="text-slate-50" />
           </Button>
