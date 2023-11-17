@@ -26,7 +26,7 @@ export default function Username() {
       const endpoint = "/users/name";
 
       const requestData = {
-        username: username,
+        name: username,
       };
       const storedToken = localStorage.getItem('userToken');
 
