@@ -5,9 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import api from "@/services/api";
 import { ChevronRight } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
-import Link from "next/link";
 
 export default function Username() {
   const [username, setUsername] = useState("");

@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import api from "@/services/api";
+
 import { ArrowLeft, ChevronRight, ShoppingCart } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
+
 import Link from "next/link";
 
 export default function Plans() {
