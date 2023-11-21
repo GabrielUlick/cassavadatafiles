@@ -40,9 +40,13 @@ export default function Username() {
         })
         .then((response) => {
           if (response.status !== 200) {
-            alert(response.data.message);
+            if (typeof window !== 'undefined') {
+              window.location.href = "/home";
+            }
           } else {
-            window.location.href = "/home";
+            if (typeof window !== 'undefined') {
+              window.location.href = "/home";
+            }
           }
         })
         .catch((error) => {

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React from "react";
 
 export default function HomePage() {
@@ -10,6 +11,11 @@ export default function HomePage() {
           <p>Meus Arquivos</p>
           <p>Arquivos Compartilhados</p>
         </div>
+      </div>
+      <div className="flex flex-col items-center w-full p-3">
+        <Link href="/plans" >
+        <p>Plano:Free</p>
+        </Link>
       </div>
     </div>
   );

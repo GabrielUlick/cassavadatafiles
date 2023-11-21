@@ -39,7 +39,6 @@ export default function Home() {
         .then((response) => {
           if (response.status !== 200) {
             alert(response.data.message);
-            window.location.href = "/validation";
           } else {
             // Obtenha o UUID da resposta
             const uid = response.data.uid;
@@ -48,7 +47,9 @@ export default function Home() {
             console.log("UUID recebido:", uid);
   
             // Você pode passar o UUID para a próxima tela, por exemplo, adicionando-o à URL
-            window.location.href = "/validation?uuid=" + uid;
+            if (typeof window !== 'undefined') {
+              window.location.href = "/validation?uuid=" + uid;
+            }
           }
         })
         .catch((error) => {

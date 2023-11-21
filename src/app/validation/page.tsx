@@ -26,8 +26,7 @@ export default function Validation() {
         uid: uid,
       };
 
-      api
-        .post(endpoint, requestData, {
+      api.post(endpoint, requestData, {
           validateStatus: (status) => status < 405,
           headers: {
             "Content-Type": "application/json",
@@ -37,7 +36,6 @@ export default function Validation() {
         .then((response) => {
           if (response.status !== 200) {
             alert(response.data.message);
-            window.location.href = "/username";
           } else {
             const token = response.data.token;
             alert(token);
@@ -46,7 +44,9 @@ export default function Validation() {
               token: token,
               callbackUrl: '/profile',
             });
-            window.location.href = "/username";
+            if (typeof window !== 'undefined') {
+              window.location.href = "/username";
+            }
           }
         })
         .catch((error) => {
