@@ -18,14 +18,14 @@ export default function Home() {
       alert("Falha no Login: Digite seu Email.");
     } else {
       const endpoint = "sessions";
-  
+
       // Construa o objeto que deseja enviar no formato JSON
       const requestData = {
         email: email,
       };
-  
+
       console.log(requestData);
-  
+
       api
         .post(endpoint, requestData, {
           validateStatus: (status) => {
@@ -40,13 +40,12 @@ export default function Home() {
           if (response.status !== 200) {
             alert(response.data.message);
           } else {
-            // Obtenha o UUID da resposta
+
             const uid = response.data.uid;
-  
-            // Faça algo com o UUID, como armazená-lo para uso posterior
+
+
             console.log("UUID recebido:", uid);
-  
-            // Você pode passar o UUID para a próxima tela, por exemplo, adicionando-o à URL
+
             if (typeof window !== 'undefined') {
               window.location.href = "/validation?uuid=" + uid;
             }
@@ -57,7 +56,7 @@ export default function Home() {
         });
     }
   }
-  
+
 
   return (
     <div className="flex items-center justify-center bg-white h-[78vh] w-auto">
