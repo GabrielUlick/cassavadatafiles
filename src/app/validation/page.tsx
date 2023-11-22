@@ -1,19 +1,18 @@
 "use client";
 
-import { signIn } from 'next-auth/react';
+import { signIn } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import api from "@/services/api";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 export default function Validation() {
   const [code, setCode] = useState("");
   const [seconds, setSeconds] = useState(300);
   const [userToken, setUserToken] = useState("");
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const uid = urlParams.get("uuid");
+  const uid = localStorage.getItem("uid");
 
   function handleValidation() {
     if (code === "") {
@@ -25,8 +24,9 @@ export default function Validation() {
         code: code,
         uid: uid,
       };
-
-      api.post(endpoint, requestData, {
+      console.log("AQUI ESTA O UID", uid);
+      api
+        .post(endpoint, requestData, {
           validateStatus: (status) => status < 405,
           headers: {
             "Content-Type": "application/json",
@@ -37,16 +37,14 @@ export default function Validation() {
           if (response.status !== 200) {
             alert(response.data.message);
           } else {
+            localStorage.removeItem("uid");
             const token = response.data.token;
             alert(token);
             setUserToken(token);
-            signIn('credentials', {
+            signIn("credentials", {
               token: token,
-              callbackUrl: '/profile',
+              callbackUrl: "/profile",
             });
-            if (typeof window !== 'undefined') {
-              window.location.href = "/username";
-            }
           }
         })
         .catch((error) => {
@@ -56,12 +54,12 @@ export default function Validation() {
   }
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('userToken');
-  
+    const storedToken = localStorage.getItem("userToken");
+
     if (storedToken !== null) {
       setUserToken(storedToken);
     }
-  
+
     const intervalId = setInterval(() => {
       setSeconds((prevSeconds) => {
         if (prevSeconds === 0) {
@@ -71,15 +69,15 @@ export default function Validation() {
         return prevSeconds - 1;
       });
     }, 1000);
-  
+
     return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
     if (userToken) {
-      localStorage.setItem('userToken', userToken);
+      localStorage.setItem("userToken", userToken);
     } else {
-      localStorage.removeItem('userToken');
+      localStorage.removeItem("userToken");
     }
   }, [userToken]);
 
@@ -97,13 +95,14 @@ export default function Validation() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setCode(e.target.value)}
           />
-          <Button
-            variant="secondary"
-            className="bg-amber-950 h-14 w-13 rounded-full"
-            onClick={handleValidation}
-          >
-            <ChevronRight className="text-slate-50" />
-          </Button>
+          <Link href="/username" onClick={handleValidation}>
+            <Button
+              variant="secondary"
+              className="bg-amber-950 h-14 w-13 rounded-full"
+            >
+              <ChevronRight className="text-slate-50" />
+            </Button>
+          </Link>
         </div>
         <p className="pl-8">
           Tempo restante: {String(minutes).padStart(2, "0")}:

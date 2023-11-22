@@ -6,12 +6,13 @@ import { Input } from "@/components/ui/input";
 import api from "@/services/api";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Username() {
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('userToken');
+    const storedToken = localStorage.getItem("userToken");
     if (storedToken) {
       alert(`Token do Local Storage: ${storedToken}`);
     }
@@ -26,7 +27,7 @@ export default function Username() {
       const requestData = {
         name: username,
       };
-      const storedToken = localStorage.getItem('userToken');
+      const storedToken = localStorage.getItem("userToken");
 
       api
         .post(endpoint, requestData, {
@@ -40,13 +41,10 @@ export default function Username() {
         })
         .then((response) => {
           if (response.status !== 200) {
-            if (typeof window !== 'undefined') {
-              window.location.href = "/home";
-            }
+            alert(response.data.message);
           } else {
-            if (typeof window !== 'undefined') {
-              window.location.href = "/home";
-            }
+            alert(response.data.message);
+            alert(storedToken);
           }
         })
         .catch((error) => {
@@ -66,13 +64,14 @@ export default function Username() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setUsername(e.target.value)}
           />
-          <Button
-            variant="secondary"
-            className="bg-amber-950 h-14 w-13 rounded-full"
-            onClick={handleSignIn}
-          >
-            <ChevronRight className="text-slate-50" />
-          </Button>
+          <Link href="/home" onClick={handleSignIn}>
+            <Button
+              variant="secondary"
+              className="bg-amber-950 h-14 w-13 rounded-full"
+            >
+              <ChevronRight className="text-slate-50" />
+            </Button>
+          </Link>
         </div>
         <p className="pl-8">Create a username (not required)</p>
       </div>
