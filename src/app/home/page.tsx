@@ -16,12 +16,13 @@ import axios from "axios";
 import { File, Folder, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
+import Cookies from "js-cookie";
 
 export default function HomePage() {
   const [activeSection, setActiveSection] = useState("meusArquivos");
-  const uid = localStorage.getItem("uid") || null;
+  const uid = Cookies.get("uid") || null;
 
-  const storedToken = localStorage.getItem("userToken");
+  const storedToken = Cookies.get("userToken");
 
   const handleFileUpload: React.ChangeEventHandler<HTMLInputElement> = async (
     event

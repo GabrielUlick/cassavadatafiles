@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import api from "@/services/api";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 export default function Validation() {
   const [code, setCode] = useState("");
   const [seconds, setSeconds] = useState(300);
   const [userToken, setUserToken] = useState("");
-  const uid = typeof window !== "undefined" ? localStorage.getItem("uid") || null : null;
+  const uid = Cookies.get("uid") || null;
 
   async function handleValidation() {
     try {
@@ -27,7 +28,7 @@ export default function Validation() {
         validateStatus: (status) => status < 405,
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer", // Adicione seu token de autorização aqui
+          Authorization: "Bearer SEU_TOKEN_AQUI", // Adicione seu token de autorização aqui
         },
       });
 
@@ -36,12 +37,10 @@ export default function Validation() {
       }
 
       const token = response.data.token;
-      alert(token);
       setUserToken(token);
 
-      if (typeof window !== "undefined" && window.localStorage) {
-        localStorage.setItem("userToken", token);
-      }
+      // Configurar um cookie chamado "userToken" com o valor do token
+      Cookies.set("userToken", token);
 
       signIn("credentials", {
         token: token,
@@ -54,13 +53,10 @@ export default function Validation() {
   }
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("userToken");
-  
-    // Use um valor padrão (vazio) se o item não existir no localStorage
-    const token = storedToken !== null ? storedToken : "";
-  
-    setUserToken(token);
-  
+    const storedToken = Cookies.get("userToken") || "";
+
+    setUserToken(storedToken);
+
     const intervalId = setInterval(() => {
       setSeconds((prevSeconds) => {
         if (prevSeconds === 0) {
@@ -70,23 +66,19 @@ export default function Validation() {
         return prevSeconds - 1;
       });
     }, 1000);
-  
+
     return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
-    const storedToken = typeof window !== 'undefined' ? localStorage.getItem("userToken") : null;
-  
-    // Use um valor padrão (vazio) se o item não existir no localStorage
-    const token = storedToken !== null ? storedToken : "";
-  
-    setUserToken(token);
-  
-    if (token === "") {
-      localStorage.removeItem("userToken");
+    const storedToken = Cookies.get("userToken") || "";
+
+    setUserToken(storedToken);
+
+    if (storedToken === "") {
+      Cookies.remove("userToken");
     }
   }, []);
-  
 
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
@@ -119,3 +111,4 @@ export default function Validation() {
     </div>
   );
 }
+

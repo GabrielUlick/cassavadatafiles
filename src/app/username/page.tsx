@@ -7,14 +7,14 @@ import api from "@/services/api";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 export default function Username() {
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("userToken");
+    const storedToken = Cookies.get("userToken");
     if (storedToken) {
-      alert(`Token do Local Storage: ${storedToken}`);
     }
   }, []);
 
@@ -27,7 +27,7 @@ export default function Username() {
       const requestData = {
         name: username,
       };
-      const storedToken = localStorage.getItem("userToken");
+      const storedToken = Cookies.get("userToken");
 
       api
         .post(endpoint, requestData, {
@@ -41,7 +41,9 @@ export default function Username() {
         })
         .then((response) => {
           if (response.status !== 200) {
+            // Lida com erros
           } else {
+            // Lida com o sucesso
           }
         })
         .catch((error) => {

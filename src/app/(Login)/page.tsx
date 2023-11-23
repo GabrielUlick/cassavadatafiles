@@ -8,43 +8,52 @@ import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 export default function Home() {
   const [email, setEmail] = useState("");
+  const [done, setDone] = useState(false);
 
-  const handleSignIn = async () => {
-    try {
-      if (email === "") {
-        throw new Error("Falha no Login: Digite seu Email.");
-      }
-
+  function handleSignIn() {
+    if (email === "") {
+      alert("Falha no Login: Digite seu Email.");
+    } else {
       const endpoint = "sessions";
-      const requestData = { email };
 
-      const response = await api.post(endpoint, requestData, {
-        validateStatus: (status) => status < 405,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer", // Adicione seu token de autorização aqui
-        },
-      });
+      // Construa o objeto que deseja enviar no formato JSON
+      const requestData = {
+        email: email,
+      };
 
-      if (response.status !== 200) {
-        throw new Error(response.data.message);
-      }
+      console.log(requestData);
 
-      const uid = response.data.uid;
-      console.log("UUID recebido:", uid);
+      api
+        .post(endpoint, requestData, {
+          validateStatus: (status) => {
+            return status < 405;
+          },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer",
+          },
+        })
+        .then((response) => {
+          if (response.status !== 200) {
+            alert(response.data.message);
+          } else {
+            const uid = response.data.uid;
 
-      // Condição para verificar se o localStorage está disponível (no navegador)
-      if (typeof window !== "undefined" && window.localStorage) {
-        localStorage.setItem("uid", uid);
-      }
-    } catch (error) {
-      console.error("Erro ao fazer login:", error);
-      alert(error);
+            console.log("UUID recebido:", uid);
+
+            // Substitua localStorage por Cookies.set
+            Cookies.set("uid", uid);
+          }
+        })
+        .catch((error) => {
+          console.error(error.message);
+        });
     }
-  };
+  }
 
   return (
     <div className="flex items-center justify-center bg-white h-[78vh] w-auto">
@@ -81,3 +90,4 @@ export default function Home() {
     </div>
   );
 }
+
