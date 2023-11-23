@@ -36,7 +36,7 @@ export default function Home() {
       const uid = response.data.uid;
       console.log("UUID recebido:", uid);
 
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && window.localStorage) {
         localStorage.setItem("uid", uid);
       }
     } catch (error) {

@@ -39,6 +39,10 @@ export default function Validation() {
       alert(token);
       setUserToken(token);
 
+      if (typeof window !== "undefined" && window.localStorage) {
+        localStorage.setItem("userToken", token);
+      }
+
       signIn("credentials", {
         token: token,
         callbackUrl: "/profile",
