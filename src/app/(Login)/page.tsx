@@ -36,6 +36,7 @@ export default function Home() {
       const uid = response.data.uid;
       console.log("UUID recebido:", uid);
 
+      // Condição para verificar se o localStorage está disponível (no navegador)
       if (typeof window !== "undefined" && window.localStorage) {
         localStorage.setItem("uid", uid);
       }
