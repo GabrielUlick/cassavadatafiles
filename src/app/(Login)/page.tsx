@@ -11,47 +11,37 @@ import Link from "next/link";
 
 export default function Home() {
   const [email, setEmail] = useState("");
-  const [done, setDone] = useState(false);
 
-  function handleSignIn() {
-    if (email === "") {
-      alert("Falha no Login: Digite seu Email.");
-    } else {
+  async function handleSignIn() {
+    try {
+      if (email === "") {
+        throw new Error("Falha no Login: Digite seu Email.");
+      }
+
       const endpoint = "sessions";
+      const requestData = { email };
 
-      // Construa o objeto que deseja enviar no formato JSON
-      const requestData = {
-        email: email,
-      };
+      const response = await api.post(endpoint, requestData, {
+        validateStatus: (status) => status < 405,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer", // Adicione seu token de autorização aqui
+        },
+      });
 
-      console.log(requestData);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
+      }
 
-      api
-        .post(endpoint, requestData, {
-          validateStatus: (status) => {
-            return status < 405;
-          },
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer",
-          },
-        })
-        .then((response) => {
-          if (response.status !== 200) {
-            alert(response.data.message);
-          } else {
-            let uid = response.data.uid;
+      const uid = response.data.uid;
+      console.log("UUID recebido:", uid);
 
-            console.log("UUID recebido:", uid);
-
-            uid = typeof window !== "undefined"
-                ? localStorage.getItem("uid")
-                : null;
-          }
-        })
-        .catch((error) => {
-          console.error(error.message);
-        });
+      if (typeof window !== "undefined") {
+        localStorage.setItem("uid", uid);
+      }
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      alert(error);
     }
   }
 

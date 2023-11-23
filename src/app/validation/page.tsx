@@ -11,44 +11,41 @@ import Link from "next/link";
 export default function Validation() {
   const [code, setCode] = useState("");
   const [seconds, setSeconds] = useState(300);
-  let [userToken, setUserToken] = useState("");
-  const uid = localStorage.getItem("uid") || null;
+  const [userToken, setUserToken] = useState("");
+  const uid = typeof window !== "undefined" ? localStorage.getItem("uid") || null : null;
 
-  function handleValidation() {
-    if (code === "") {
-      alert("Falha no Login: Digite seu código.");
-    } else {
+  async function handleValidation() {
+    try {
+      if (code === "") {
+        throw new Error("Falha na validação: Digite seu código.");
+      }
+
       const endpoint = "sessions/validations";
+      const requestData = { code, uid };
 
-      const requestData = {
-        code: code,
-        uid: uid,
-      };
-      console.log("AQUI ESTA O UID", uid);
-      api
-        .post(endpoint, requestData, {
-          validateStatus: (status) => status < 405,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer",
-          },
-        })
-        .then((response) => {
-          if (response.status !== 200) {
-            alert(response.data.message);
-          } else {
-            const token = response.data.token;
-            alert(token);
-            setUserToken(token);
-            signIn("credentials", {
-              token: token,
-              callbackUrl: "/profile",
-            });
-          }
-        })
-        .catch((error) => {
-          console.error(error.message);
-        });
+      const response = await api.post(endpoint, requestData, {
+        validateStatus: (status) => status < 405,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer", // Adicione seu token de autorização aqui
+        },
+      });
+
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
+      }
+
+      const token = response.data.token;
+      alert(token);
+      setUserToken(token);
+
+      signIn("credentials", {
+        token: token,
+        callbackUrl: "/profile",
+      });
+    } catch (error) {
+      console.error("Erro na validação:", error);
+      alert(error);
     }
   }
 
