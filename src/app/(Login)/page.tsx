@@ -12,15 +12,15 @@ import Link from "next/link";
 export default function Home() {
   const [email, setEmail] = useState("");
 
-  async function handleSignIn() {
+  const handleSignIn = async () => {
     try {
       if (email === "") {
         throw new Error("Falha no Login: Digite seu Email.");
       }
-
+  
       const endpoint = "sessions";
       const requestData = { email };
-
+  
       const response = await api.post(endpoint, requestData, {
         validateStatus: (status) => status < 405,
         headers: {
@@ -28,14 +28,14 @@ export default function Home() {
           Authorization: "Bearer", // Adicione seu token de autorização aqui
         },
       });
-
+  
       if (response.status !== 200) {
         throw new Error(response.data.message);
       }
-
+  
       const uid = response.data.uid;
       console.log("UUID recebido:", uid);
-
+  
       // Condição para verificar se o localStorage está disponível (no navegador)
       if (typeof window !== "undefined" && window.localStorage) {
         localStorage.setItem("uid", uid);
@@ -44,7 +44,7 @@ export default function Home() {
       console.error("Erro ao fazer login:", error);
       alert(error);
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center bg-white h-[78vh] w-auto">
