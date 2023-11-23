@@ -23,10 +23,13 @@ import React, { useState } from "react";
 
 export default function HomePage() {
   const [activeSection, setActiveSection] = useState("meusArquivos");
-  const uid = localStorage.getItem("uid");
+  const uid = localStorage.getItem("uid") || null;
+
   const storedToken = localStorage.getItem("userToken");
 
-  const handleFileUpload: React.ChangeEventHandler<HTMLInputElement> = async (event) => {
+  const handleFileUpload: React.ChangeEventHandler<HTMLInputElement> = async (
+    event
+  ) => {
     const file = event.target.files?.[0];
 
     if (file) {
@@ -43,12 +46,16 @@ export default function HomePage() {
         };
 
         try {
-          const response = await axios.post("https://api-cassava-gps.lasfh.com/?op=new", jsonData, {
-            headers: {
-              Authorization: `Bearer ${storedToken}`,
-              'Content-Type': 'application/json',
-            },
-          });
+          const response = await axios.post(
+            "https://api-cassava-gps.lasfh.com/?op=new",
+            jsonData,
+            {
+              headers: {
+                Authorization: `Bearer ${storedToken}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
 
           if (response.status === 200) {
             console.log("Arquivo enviado com sucesso!");

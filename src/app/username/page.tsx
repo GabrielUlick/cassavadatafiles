@@ -41,10 +41,7 @@ export default function Username() {
         })
         .then((response) => {
           if (response.status !== 200) {
-            alert(response.data.message);
           } else {
-            alert(response.data.message);
-            alert(storedToken);
           }
         })
         .catch((error) => {

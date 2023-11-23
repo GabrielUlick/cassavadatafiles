@@ -11,8 +11,8 @@ import Link from "next/link";
 export default function Validation() {
   const [code, setCode] = useState("");
   const [seconds, setSeconds] = useState(300);
-  const [userToken, setUserToken] = useState("");
-  const uid = localStorage.getItem("uid");
+  let [userToken, setUserToken] = useState("");
+  const uid = localStorage.getItem("uid") || null;
 
   function handleValidation() {
     if (code === "") {
@@ -54,11 +54,12 @@ export default function Validation() {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("userToken");
-
-    if (storedToken !== null) {
-      setUserToken(storedToken);
-    }
-
+  
+    // Use um valor padrão (vazio) se o item não existir no localStorage
+    const token = storedToken !== null ? storedToken : "";
+  
+    setUserToken(token);
+  
     const intervalId = setInterval(() => {
       setSeconds((prevSeconds) => {
         if (prevSeconds === 0) {
@@ -68,17 +69,23 @@ export default function Validation() {
         return prevSeconds - 1;
       });
     }, 1000);
-
+  
     return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
-    if (userToken) {
-      localStorage.setItem("userToken", userToken);
-    } else {
+    const storedToken = typeof window !== 'undefined' ? localStorage.getItem("userToken") : null;
+  
+    // Use um valor padrão (vazio) se o item não existir no localStorage
+    const token = storedToken !== null ? storedToken : "";
+  
+    setUserToken(token);
+  
+    if (token === "") {
       localStorage.removeItem("userToken");
     }
-  }, [userToken]);
+  }, []);
+  
 
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;

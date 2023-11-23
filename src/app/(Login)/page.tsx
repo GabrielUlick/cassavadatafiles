@@ -9,7 +9,6 @@ import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 
-
 export default function Home() {
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
@@ -41,11 +40,13 @@ export default function Home() {
           if (response.status !== 200) {
             alert(response.data.message);
           } else {
-            const uid = response.data.uid;
+            let uid = response.data.uid;
 
             console.log("UUID recebido:", uid);
 
-            localStorage.setItem("uid", uid);
+            uid = typeof window !== "undefined"
+                ? localStorage.getItem("uid")
+                : null;
           }
         })
         .catch((error) => {
