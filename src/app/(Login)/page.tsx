@@ -17,10 +17,10 @@ export default function Home() {
       if (email === "") {
         throw new Error("Falha no Login: Digite seu Email.");
       }
-  
+
       const endpoint = "sessions";
       const requestData = { email };
-  
+
       const response = await api.post(endpoint, requestData, {
         validateStatus: (status) => status < 405,
         headers: {
@@ -28,14 +28,14 @@ export default function Home() {
           Authorization: "Bearer", // Adicione seu token de autorização aqui
         },
       });
-  
+
       if (response.status !== 200) {
         throw new Error(response.data.message);
       }
-  
+
       const uid = response.data.uid;
       console.log("UUID recebido:", uid);
-  
+
       // Condição para verificar se o localStorage está disponível (no navegador)
       if (typeof window !== "undefined" && window.localStorage) {
         localStorage.setItem("uid", uid);
@@ -67,14 +67,13 @@ export default function Home() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Link href="/validation" onClick={handleSignIn}>
-            <Button
-              variant="secondary"
-              className="bg-amber-950 h-14 w-13 rounded-full"
-            >
-              <ChevronRight className="text-slate-50" />
-            </Button>
-          </Link>
+          <Button
+            variant="secondary"
+            className="bg-amber-950 h-14 w-13 rounded-full"
+            onClick={handleSignIn}
+          >
+            <ChevronRight className="text-slate-50" />
+          </Button>
         </div>
         <p className="pl-6">Login or create a new account with your email</p>
       </div>
