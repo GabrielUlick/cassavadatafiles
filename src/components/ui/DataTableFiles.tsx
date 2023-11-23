@@ -35,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import axios from "axios"
 
 
 export type Arquivos = {
@@ -72,28 +73,28 @@ export const columns: ColumnDef<Arquivos>[] = [
     accessorKey: "filename",
     header: "Nome",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <div className="capitalize">{row.getValue("filename")}</div>
     ),
   },
   {
     accessorKey: "created_at",
     header: "Criado em",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <div className="capitalize">{row.getValue("created_at")}</div>
     ),
   },
   {
     accessorKey: "updated_at",
     header: "Atualizado em",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <div className="capitalize">{row.getValue("updated_at")}</div>
     ),
   },
   {
     accessorKey: "size",
     header: "Tamanho",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("status")}</div>
+      <div className="capitalize">{row.getValue("size")}</div>
     ),
   },
   
@@ -140,20 +141,26 @@ export function DataTableFiles() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    // Função para buscar dados da API
     const fetchData = async () => {
       try {
-        const response = await fetch("https://api-cassava-gps.lasfh.com/?path=/");
-        const result = await response.json();
-        setData(result);
+        const storedToken = localStorage.getItem("userToken");
+  
+        const response = await axios.get("https://api-cassava-gps.lasfh.com/?path=/", {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        });
+  
+        setData(response.data);
+        console.log("AQUI ESTA O QUE VEIO DO BANCO", response.data);
       } catch (error) {
         console.error("Erro ao buscar dados da API:", error);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchData(); // Chama a função ao montar o componente
+  
+    fetchData();
   }, []);
 
   const table = useReactTable({

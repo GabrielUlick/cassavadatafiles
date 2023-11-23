@@ -37,7 +37,6 @@ export default function Validation() {
           if (response.status !== 200) {
             alert(response.data.message);
           } else {
-            localStorage.removeItem("uid");
             const token = response.data.token;
             alert(token);
             setUserToken(token);
