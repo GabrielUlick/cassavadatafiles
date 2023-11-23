@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import api from "@/services/api";
@@ -11,12 +11,6 @@ import Cookies from "js-cookie";
 
 export default function Username() {
   const [username, setUsername] = useState("");
-
-  useEffect(() => {
-    const storedToken = Cookies.get("userToken");
-    if (storedToken) {
-    }
-  }, []);
 
   function handleSignIn() {
     if (username === "") {
@@ -36,18 +30,17 @@ export default function Username() {
           },
           headers: {
             "Content-Type": "application/json",
-            Authorization: storedToken ? `Bearer ${storedToken}` : "",
+            Authorization: storedToken ? `Bearer ${storedToken}` : " ",
           },
         })
         .then((response) => {
           if (response.status !== 200) {
-            // Lida com erros
+            console.log("ok")
           } else {
-            // Lida com o sucesso
           }
         })
         .catch((error) => {
-          console.error(error.message);
+          console.error(error);
         });
     }
   }
@@ -72,7 +65,7 @@ export default function Username() {
             </Button>
           </Link>
         </div>
-        <p className="pl-8">Create a username (not required)</p>
+        <p className="pl-8">Create a username </p>
       </div>
     </div>
   );
