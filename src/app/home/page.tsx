@@ -17,6 +17,7 @@ import { File, Folder, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import Cookies from "js-cookie";
+import { DataTableFilesComp } from "@/components/ui/DataTableFilesComp";
 
 export default function HomePage() {
   const [activeSection, setActiveSection] = useState("meusArquivos");
@@ -131,7 +132,11 @@ export default function HomePage() {
           <p>Plano: Free</p>
         </Link>
         <div className="flex h-auto w-full mt-10">
-          <DataTableFiles />
+          {activeSection === "meusArquivos" ? (
+            <DataTableFiles />
+          ) : (
+            <DataTableFilesComp />
+          )}
         </div>
       </div>
     </div>
