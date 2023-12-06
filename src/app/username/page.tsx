@@ -24,7 +24,7 @@ export default function Username() {
       const storedToken = Cookies.get("userToken");
 
       api
-        .post(endpoint, requestData, {
+        .put(endpoint, requestData, {
           validateStatus: (status) => {
             return status < 405;
           },
