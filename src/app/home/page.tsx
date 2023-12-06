@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 import { File, Folder, PlusCircle } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { DataTableFilesComp } from "@/app/home/DataTableFilesComp";
 import { DialogFolder } from "./DialogFolder";
@@ -20,8 +20,17 @@ import { DialogFolder } from "./DialogFolder";
 export default function HomePage() {
   const [activeSection, setActiveSection] = useState("meusArquivos");
   const uid = Cookies.get("uid") || null;
-
   const storedToken = Cookies.get("userToken");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+  
+      if (!storedToken) {
+        window.location.href = "/"; 
+      } else {
+        
+      }
+    }
+  }, []);
 
   const handleFileUpload: React.ChangeEventHandler<HTMLInputElement> = async (
     event

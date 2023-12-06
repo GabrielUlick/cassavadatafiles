@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import api from "@/services/api";
@@ -14,7 +14,19 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [done, setDone] = useState("");
 
-  function handleSignIn() {
+  useEffect(() => {
+    const storedToken = Cookies.get("userToken");
+    if (typeof window !== "undefined") {
+  
+      if (!storedToken) {
+       
+      } else {
+        window.location.href = "/home"; 
+      }
+    }
+  }, []);
+
+  async function handleSignIn() {
     if (email === "") {
       alert("Falha no Login: Digite seu Email.");
     } else {
@@ -38,12 +50,12 @@ export default function Home() {
         .then((response) => {
           if (response.status !== 200) {
             alert(response.data.message);
-            setDone("/")
+            setDone("/");
           } else {
             const uid = response.data.uid;
             console.log("UUID recebido:", uid);
             Cookies.set("uid", uid);
-            setDone("/validation")
+            setDone("/validation");
           }
         })
         .catch((error) => {
@@ -87,4 +99,3 @@ export default function Home() {
     </div>
   );
 }
-

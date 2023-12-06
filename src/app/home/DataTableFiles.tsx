@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/table";
 import axios from "axios";
 import { format } from "date-fns";
+import Cookies from "js-cookie";
 
 export type Arquivos = {
   id: string;
@@ -168,7 +169,7 @@ export function DataTableFiles() {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const storedToken = localStorage.getItem("userToken");
+        const storedToken = Cookies.get("userToken");
 
         const response = await axios.get(
           "https://api-cassava-gps.lasfh.com/?path=/",
