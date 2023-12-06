@@ -64,11 +64,14 @@ export default function HomePage() {
 
           if (response.status === 200) {
             console.log("Arquivo enviado com sucesso!");
+            location.reload();
           } else {
             console.error("Erro ao enviar o arquivo:", response.data);
+            location.reload();
           }
         } catch (error) {
           console.error("Erro de rede:", error);
+          location.reload();
         }
       };
 
