@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,11 +12,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -25,8 +25,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -34,17 +34,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import axios from "axios"
-
+} from "@/components/ui/table";
+import axios from "axios";
+import { format } from "date-fns";
 
 export type Arquivos = {
-  id: string
-  filename: string
-  created_at: Date
-  updated_at: Date
-  size: number
-}
+  id: string;
+  filename: string;
+  created_at: Date;
+  updated_at: Date;
+  size: number;
+};
 
 export const columns: ColumnDef<Arquivos>[] = [
   {
@@ -80,29 +80,54 @@ export const columns: ColumnDef<Arquivos>[] = [
     accessorKey: "created_at",
     header: "Criado em",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("created_at")}</div>
+      <div className="capitalize">
+        {format(new Date(row.getValue("created_at")), "dd/MM/yyyy")}
+      </div>
     ),
   },
   {
     accessorKey: "updated_at",
     header: "Atualizado em",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("updated_at")}</div>
+      <div className="capitalize">
+        {format(new Date(row.getValue("updated_at")), "dd/MM/yyyy")}
+      </div>
     ),
   },
   {
     accessorKey: "size",
     header: "Tamanho",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("size")}</div>
-    ),
+    cell: ({ row }) => {
+      const fileSize = row.original.size;
+
+      if (typeof fileSize === "number") {
+        const kiloBytes = fileSize / 1024;
+        const megaBytes = kiloBytes / 1024;
+        const gigaBytes = megaBytes / 1024;
+
+        let formattedSize;
+        if (gigaBytes >= 1) {
+          formattedSize = gigaBytes.toFixed(2) + " GB";
+        } else if (megaBytes >= 1) {
+          formattedSize = megaBytes.toFixed(2) + " MB";
+        } else if (kiloBytes >= 1) {
+          formattedSize = kiloBytes.toFixed(2) + " KB";
+        } else {
+          formattedSize = fileSize.toFixed(2) + " B";
+        }
+
+        return <div className="capitalize">{formattedSize}</div>;
+      }
+
+      return "";
+    },
   },
-  
+
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+      const files = row.original;
 
       return (
         <DropdownMenu>
@@ -115,42 +140,45 @@ export const columns: ColumnDef<Arquivos>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(files.id)}
             >
-              Copy payment ID
+              Copiar id
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>Visualizar</DropdownMenuItem>
+            <DropdownMenuItem>Deletar</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )
+      );
     },
   },
-]
+];
 
 export function DataTableFiles() {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
-  )
+  );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [data, setData] = React.useState([]); // Estado para armazenar os dados da API
+    React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     const fetchData = async () => {
       try {
         const storedToken = localStorage.getItem("userToken");
-  
-        const response = await axios.get("https://api-cassava-gps.lasfh.com/?path=/", {
-          headers: {
-            Authorization: `Bearer ${storedToken}`,
-          },
-        });
-  
+
+        const response = await axios.get(
+          "https://api-cassava-gps.lasfh.com/?path=/",
+          {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          }
+        );
+
         setData(response.data);
         console.log("AQUI ESTA O QUE VEIO DO BANCO", response.data);
       } catch (error) {
@@ -159,7 +187,7 @@ export function DataTableFiles() {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, []);
 
@@ -180,14 +208,16 @@ export function DataTableFiles() {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
           placeholder="Search"
-          value={(table.getColumn("filename")?.getFilterValue() as string) ?? ""}
+          value={
+            (table.getColumn("filename")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
             table.getColumn("filename")?.setFilterValue(event.target.value)
           }
@@ -215,11 +245,11 @@ export function DataTableFiles() {
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
-                )
+                );
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        </div>
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -235,20 +265,22 @@ export function DataTableFiles() {
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {loading ? ( 
+            {loading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   Carregando...
                 </TableCell>
               </TableRow>
             ) : (
-
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -256,7 +288,10 @@ export function DataTableFiles() {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -290,5 +325,5 @@ export function DataTableFiles() {
         </div>
       </div>
     </div>
-  )
+  );
 }

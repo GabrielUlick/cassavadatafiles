@@ -1,15 +1,12 @@
 "use client";
 
-import { DataTableFiles } from "@/components/ui/DataTableFiles";
+import { DataTableFiles } from "@/app/home/DataTableFiles";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-
   DropdownMenuLabel,
-
   DropdownMenuSeparator,
-
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import axios from "axios";
@@ -17,7 +14,8 @@ import { File, Folder, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import Cookies from "js-cookie";
-import { DataTableFilesComp } from "@/components/ui/DataTableFilesComp";
+import { DataTableFilesComp } from "@/app/home/DataTableFilesComp";
+import { DialogFolder } from "./DialogFolder";
 
 export default function HomePage() {
   const [activeSection, setActiveSection] = useState("meusArquivos");
@@ -40,7 +38,7 @@ export default function HomePage() {
           filename: file.name,
           is_file: true,
           size: file.size,
-          file_modified_in: "2023-09-20T19:29:26Z",
+          file_modified_in: new Date().toString,
         };
 
         try {
@@ -120,8 +118,7 @@ export default function HomePage() {
               />
               <DropdownMenuSeparator />
               <DropdownMenuLabel className="flex gap-5">
-                Nova Pasta
-                <Folder size={20} />
+                <DialogFolder />
               </DropdownMenuLabel>
             </DropdownMenuContent>
           </DropdownMenu>

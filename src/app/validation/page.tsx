@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import api from "@/services/api";
@@ -11,8 +11,19 @@ import Cookies from "js-cookie";
 export default function Validation() {
   const [code, setCode] = useState("");
   const [seconds, setSeconds] = useState(300);
+  const [done, setDone] = useState("");
   const [userToken, setUserToken] = useState("");
   const uid = Cookies.get("uid") || null;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+ 
+      setSeconds((prevSeconds) => (prevSeconds > 0 ? prevSeconds - 1 : 0));
+    }, 1000);
+
+    
+    return () => clearInterval(interval);
+  }, []);
 
   async function handleValidation() {
     try {
@@ -23,21 +34,28 @@ export default function Validation() {
       const endpoint = "sessions/validations";
       const requestData = { code, uid };
 
-      const response = await api.post(endpoint, requestData, {
-        validateStatus: (status) => {
-          return status < 405;
-        },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer",
-        },
-      });
+      const response = await api
+        .post(endpoint, requestData, {
+          validateStatus: (status) => {
+            return status < 405;
+          },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer",
+          },
+        })
+        .then((response) => {
+          if (response.status !== 200) {
+            alert(response.data.message);
+            setDone("/validation");
+          } else {
+            const token = response.data.token;
+            setUserToken(token);
 
-      const token = response.data.token;
-      setUserToken(token);
-
-      Cookies.set("userToken", token);
-
+            Cookies.set("userToken", token);
+            setDone("/username");
+          }
+        });
     } catch (error) {
       console.error("Erro na validação:", error);
       alert(error);
@@ -58,7 +76,7 @@ export default function Validation() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setCode(e.target.value)}
           />
-          <Link href="/username" onClick={handleValidation}>
+          <Link href={done} onClick={handleValidation}>
             <Button
               variant="secondary"
               className="bg-amber-950 h-14 w-13 rounded-full"

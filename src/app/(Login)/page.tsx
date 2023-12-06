@@ -12,15 +12,13 @@ import Cookies from "js-cookie";
 
 export default function Home() {
   const [email, setEmail] = useState("");
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState("");
 
   function handleSignIn() {
     if (email === "") {
       alert("Falha no Login: Digite seu Email.");
     } else {
       const endpoint = "sessions";
-
-      // Construa o objeto que deseja enviar no formato JSON
       const requestData = {
         email: email,
       };
@@ -40,13 +38,12 @@ export default function Home() {
         .then((response) => {
           if (response.status !== 200) {
             alert(response.data.message);
+            setDone("/")
           } else {
             const uid = response.data.uid;
-
             console.log("UUID recebido:", uid);
-
-            // Substitua localStorage por Cookies.set
             Cookies.set("uid", uid);
+            setDone("/validation")
           }
         })
         .catch((error) => {
@@ -76,7 +73,7 @@ export default function Home() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Link href="/validation" onClick={handleSignIn}>
+          <Link href={done} onClick={handleSignIn}>
             <Button
               variant="secondary"
               className="bg-amber-950 h-14 w-13 rounded-full"
