@@ -21,6 +21,7 @@ export default function HomePage() {
   const [activeSection, setActiveSection] = useState("meusArquivos");
   const uid = Cookies.get("uid") || null;
   const storedToken = Cookies.get("userToken");
+  
   useEffect(() => {
     if (typeof window !== "undefined") {
   

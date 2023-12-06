@@ -20,14 +20,17 @@ const Header = () => {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://api.olhai.me/v1/users", {
-          headers: {
-            Authorization: `Bearer ${storedToken}`,
-          },
-        });
-        setData(response.data?.name);
-        console.log(response);
-        console.log("AQUI ESTA O QUE VEIO DO BANCO", response.data);
+        axios
+          .get("https://api.olhai.me/v1/users", {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          })
+          .then((response) => {
+            setData(response.data?.name);
+            console.log(response);
+            console.log("AQUI ESTA O QUE VEIO DO BANCO", response.data);
+          });
       } catch (error) {
         console.error("Erro ao buscar dados da API:", error);
       }
@@ -49,7 +52,7 @@ const Header = () => {
         }}
       />
       <div>
-        {storedToken ? (
+        {storedToken ? ( 
           <div className="flex mt-16 items-center gap-2 text-orange-500">
             <div className="flex gap-2 border-white">
               <User /> {data}
