@@ -76,7 +76,7 @@ export default function Validation() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setCode(e.target.value)}
           />
-          <Link href={done} onClick={handleValidation}>
+          <Link onClick={handleValidation} href={done}>
             <Button
               variant="secondary"
               className="bg-amber-950 h-14 w-13 rounded-full"

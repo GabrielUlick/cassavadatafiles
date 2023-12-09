@@ -16,7 +16,7 @@ const formatFileSize = (bytes: number): string => {
 };
 
 const formatDate = (dateString: string | undefined): string => {
-  if (!dateString) return ""; // ou outra lógica de tratamento para valores indefinidos
+  if (!dateString) return "";
   const date = parseISO(dateString);
   return format(date, "dd/MM/yyyy");
 };
@@ -24,11 +24,11 @@ const formatDate = (dateString: string | undefined): string => {
 const VizualizarArquivos = () => {
   const id = Cookies.get("id");
   const filename = Cookies.get("filename");
+  const valoresSeparados: string[] | undefined = filename?.split(".");
   const sizeString = Cookies.get("size");
   const created_at = Cookies.get("created_at");
   const updated_at = Cookies.get("updated_at");
 
-  // Converter para número, tratando o valor undefined
   const size = sizeString ? parseFloat(sizeString) : 0;
 
   const formattedSize = formatFileSize(size);
@@ -37,17 +37,20 @@ const VizualizarArquivos = () => {
 
   return (
     <div className="mx-16 h-[77vh]">
-      
       <div className="flex p-10 ml-12 text-3xl items-center gap-10">
-      <div>
-        <Link href="/home">
-          <ArrowLeft />
-        </Link>
+        <div>
+          <Link href="/home">
+            <ArrowLeft />
+          </Link>
+        </div>
+        {filename}
       </div>
-        {filename}</div>
       <div className="flex w-full justify-center">
         <div className="flex bg-gray-300 h-96 w-[90%] items-center justify-center text-amber-950">
-          <File size={150} />
+          <File size={150} className="absolute"/>
+          <div className="text-xl font-extrabold mt-4">
+          {valoresSeparados ? "."+valoresSeparados[1] : "."}
+          </div>
         </div>
       </div>
       <div className="flex p-10 justify-evenly">
