@@ -42,7 +42,7 @@ export function DialogFolder() {
             },
           }
         );
-  
+        location.reload();
         if (response.status === 200) {
           console.log("Arquivo enviado com sucesso!");
         } else {

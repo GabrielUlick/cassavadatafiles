@@ -38,6 +38,7 @@ import {
 import axios from "axios";
 import { format } from "date-fns";
 import Cookies from "js-cookie";
+import Link from "next/link";
 
 export type Arquivos = {
   id: string;
@@ -130,6 +131,52 @@ export const columns: ColumnDef<Arquivos>[] = [
     cell: ({ row }) => {
       const files = row.original;
 
+      async function handleDelete(): Promise<void> {
+        const storedToken = Cookies.get("userToken");
+        const uid = Cookies.get("uid");
+        // https://api-cassava-gps.lasfh.com/?op=del
+        const jsonData = {
+          id: files.id,
+          user_id: uid,
+        };
+
+        console.log(
+          "AQUI TA OS DADOS QUE VAO SER ENVIADOS PARA DELETE",
+          jsonData
+        );
+        try {
+          await axios.post(
+            "https://api-cassava-gps.lasfh.com/?op=del",
+            jsonData,
+            {
+              headers: {
+                Authorization: `Bearer ${storedToken}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          location.reload();
+        } catch (error) {
+          console.error("Erro ao buscar dados da API:", error);
+          location.reload();
+        } finally {
+        }
+      }
+
+      function handleEnviarArquivo(): Promise<void> {
+        Cookies.remove("id");
+        Cookies.remove("filename");
+        Cookies.remove("size");
+        Cookies.remove("created_at");
+        Cookies.remove("updated_at");
+        Cookies.set("id", files.id);
+        Cookies.set("filename", files.filename);
+        Cookies.set("size", files.size.toString());
+        Cookies.set("created_at", files.created_at.toString());
+        Cookies.set("updated_at", files.updated_at.toString());
+        return Promise.resolve();
+    }
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -146,8 +193,12 @@ export const columns: ColumnDef<Arquivos>[] = [
               Copiar id
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Visualizar</DropdownMenuItem>
-            <DropdownMenuItem>Deletar</DropdownMenuItem>
+            <Link onClick={() => handleEnviarArquivo()} href={`/arquivo/${files.id}`}>
+              <DropdownMenuItem>Visualizar</DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem onClick={() => handleDelete()}>
+              Deletar
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -156,6 +207,8 @@ export const columns: ColumnDef<Arquivos>[] = [
 ];
 
 export function DataTableFiles() {
+  const storedToken = Cookies.get("userToken");
+  const uid = Cookies.get("uid");
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -169,16 +222,16 @@ export function DataTableFiles() {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const storedToken = Cookies.get("userToken");
-
         const response = await axios.get(
-          "https://api-cassava-gps.lasfh.com/?path=/",
+          "https://api-cassava-gps.lasfh.com/?user=" + uid,
           {
             headers: {
               Authorization: `Bearer ${storedToken}`,
             },
           }
         );
+
+        // https://api-cassava-gps.lasfh.com/?user=user-id-1234
 
         setData(response.data);
         console.log("AQUI ESTA O QUE VEIO DO BANCO", response.data);
@@ -191,6 +244,36 @@ export function DataTableFiles() {
 
     fetchData();
   }, []);
+
+  async function handleDelete(arquivo: any) {
+    // https://api-cassava-gps.lasfh.com/?op=del
+    const jsonData = {
+      id: "e3c021a7fd9a6f0a2eb61586dcb1c67e6f1bf87c85f22bc0b3511a215dcb5994",
+      user_id: uid,
+    };
+
+    try {
+      const response = await axios.post(
+        "https://api-cassava-gps.lasfh.com/?op=del",
+        jsonData,
+        {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // https://api-cassava-gps.lasfh.com/?user=user-id-1234
+
+      setData(response.data);
+      console.log("AQUI ESTA O QUE VEIO DO BANCO", response.data);
+    } catch (error) {
+      console.error("Erro ao buscar dados da API:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const table = useReactTable({
     data,
