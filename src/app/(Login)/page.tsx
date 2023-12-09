@@ -85,7 +85,7 @@ export default function Home() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Link onClick={handleSignIn} href={done}>
+          <Link href={done} onClick={handleSignIn}>
             <Button
               variant="secondary"
               className="bg-amber-950 h-14 w-13 rounded-full"
