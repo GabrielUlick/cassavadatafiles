@@ -50,12 +50,12 @@ export default function Home() {
         .then((response) => {
           if (response.status !== 200) {
             alert(response.data.message);
-            setDone("/");
+            window.location.href = "/";
           } else {
             const uid = response.data.uid;
             console.log("UUID recebido:", uid);
             Cookies.set("uid", uid);
-            setDone("/validation");
+            window.location.href = "/validation";
           }
         })
         .catch((error) => {
@@ -85,14 +85,15 @@ export default function Home() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Link href={done} onClick={handleSignIn}>
+      
             <Button
               variant="secondary"
               className="bg-amber-950 h-14 w-13 rounded-full"
+              onClick={() => handleSignIn()}
             >
               <ChevronRight className="text-slate-50" />
             </Button>
-          </Link>
+   
         </div>
         <p className="pl-6">Login or create a new account with your email</p>
       </div>

@@ -17,11 +17,9 @@ export default function Validation() {
 
   useEffect(() => {
     const interval = setInterval(() => {
- 
       setSeconds((prevSeconds) => (prevSeconds > 0 ? prevSeconds - 1 : 0));
     }, 1000);
 
-    
     return () => clearInterval(interval);
   }, []);
 
@@ -47,13 +45,13 @@ export default function Validation() {
         .then((response) => {
           if (response.status !== 200) {
             alert(response.data.message);
-            setDone("/validation");
+            window.location.href = "/validation";
           } else {
             const token = response.data.token;
             setUserToken(token);
 
             Cookies.set("userToken", token);
-            setDone("/username");
+            window.location.href = "/username";
           }
         });
     } catch (error) {
@@ -76,14 +74,15 @@ export default function Validation() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setCode(e.target.value)}
           />
-          <Link onClick={handleValidation} href={done}>
+         
             <Button
               variant="secondary"
               className="bg-amber-950 h-14 w-13 rounded-full"
+              onClick={() => handleValidation()}
             >
               <ChevronRight className="text-slate-50" />
             </Button>
-          </Link>
+     
         </div>
         <p className="pl-8">
           Tempo restante: {String(minutes).padStart(2, "0")}:
