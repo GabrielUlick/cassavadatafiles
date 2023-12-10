@@ -35,8 +35,10 @@ export default function Username() {
         })
         .then((response) => {
           if (response.status !== 200) {
-            console.log("ok")
+            console.log("ok");
+            window.location.href = "/home"; 
           } else {
+            window.location.href = "/home"; 
           }
         })
         .catch((error) => {
@@ -56,14 +58,14 @@ export default function Username() {
             className="h-14 w-80 bg-slate-100 rounded-full"
             onChange={(e) => setUsername(e.target.value)}
           />
-          <Link href="/home" onClick={handleSignIn}>
+
             <Button
               variant="secondary"
               className="bg-amber-950 h-14 w-13 rounded-full"
+              onClick={() => handleSignIn()}
             >
               <ChevronRight className="text-slate-50" />
             </Button>
-          </Link>
         </div>
         <p className="pl-8">Create a username </p>
       </div>

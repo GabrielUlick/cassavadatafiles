@@ -16,7 +16,7 @@ export default function Plans() {
                     <ArrowLeft />
                 </Link>
             </div>
-            <div className="flex items-center justify-center bg-white h-[77vh] w-auto">
+            <div className="flex items-center justify-center bg-white h-[66vh] w-auto">
                 <div className="flex items-center justify-center gap-40">
 
                     <div className="flex flex-col bg-slate-200 items-center justify-between gap-10 rounded-lg max-w-sm w-96 h-[500px] shadow-xl">
