@@ -82,7 +82,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex h-[100vh] w-auto">
+    <div className="flex h-[90vh] w-auto">
       <div className="flex flex-col mt-20 ml-8 border-r w-60 items-center justify-between">
         <div className="flex flex-col gap-5 pr-5">
           <Button
@@ -141,7 +141,7 @@ export default function HomePage() {
         <Link href="/plans">
           <p>Plano: Free</p>
         </Link>
-        <div className="flex h-auto w-full mt-10">
+        <div className="flex h-auto w-full">
           {activeSection === "meusArquivos" ? (
             <DataTableFiles />
           ) : (
